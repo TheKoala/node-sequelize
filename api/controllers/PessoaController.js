@@ -67,6 +67,64 @@ class PessoaController {
         res.status(500).send(error);
       });
   }
+
+  static listaMatriculaPorId(req, res) {
+    const { idEstudante, idMatricula } = req.params;
+    database.Matriculas.findOne({
+      where: { id: Number(idMatricula), estudante_id: Number(idEstudante) },
+    })
+      .then((matricula) => {
+        res.status(200).send(matricula);
+      })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
+  }
+
+  static novaMatricula(req, res) {
+    const { idEstudante } = req.params;
+    const novaMatricula = { ...req.body, estudante_id: Number(idEstudante) };
+
+    database.Matriculas.create(novaMatricula)
+      .then((matricula) => {
+        res.status(200).send(matricula);
+      })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
+  }
+
+  static async atualizaMatricula(req, res) {
+    const { idEstudante, idMatricula } = req.params;
+    const matriculaAtualizada = req.body;
+
+    try {
+      await database.Matriculas.update(matriculaAtualizada, {
+        where: { id: Number(idMatricula), estudante_id: Number(idEstudante) },
+      });
+
+      database.Matriculas.findOne({
+        where: { id: Number(idMatricula), estudante_id: Number(idEstudante) },
+      }).then((matricula) => {
+        res.status(200).send(matricula);
+      });
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  }
+
+  static deletaMatricula(req, res) {
+    const { idEstudante, idMatricula } = req.params;
+    database.Matriculas.destroy({
+      where: { id: Number(idMatricula), estudante_id: Number(idEstudante) },
+    })
+      .then(() => {
+        res.status(200).send();
+      })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
+  }
 }
 
 module.exports = PessoaController;
