@@ -2,7 +2,8 @@ const database = require("../models");
 
 class PessoaController {
   static listarPessoas(req, res) {
-    database.Pessoas.findAll()
+    const { incluiDeletados } = req.query;
+    database.Pessoas.findAll({ paranoid: Boolean(!incluiDeletados) })
       .then((pessoas) => {
         res.status(200).send(pessoas);
       })
@@ -57,12 +58,30 @@ class PessoaController {
 
   static deletaPessoa(req, res) {
     const { id } = req.params;
+    const { force } = req.query;
     database.Pessoas.destroy({
       where: { id: Number(id) },
+      force: Boolean(force),
     })
       .then(() => {
         res.status(200).send();
       })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
+  }
+
+  static restauraPessoa(req, res) {
+    const { id } = req.params;
+
+    database.Pessoas.restore({
+      where: { id: Number(id) },
+    })
+      .then(
+        res
+          .status(200)
+          .send(`Pessoa com  o ID ${id} foi restaurado com sucesso`)
+      )
       .catch((error) => {
         res.status(500).send(error);
       });
@@ -121,6 +140,22 @@ class PessoaController {
       .then(() => {
         res.status(200).send();
       })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
+  }
+
+  static restauraMatricula(req, res) {
+    const { idEstudante, idMatricula } = req.params;
+
+    database.Matriculas.restore({
+      where: { id: Number(idMatricula), estudante_id: Number(idEstudante) },
+    })
+      .then(
+        res
+          .status(200)
+          .send(`Matricula com  o ID ${idMatricula} foi restaurado com sucesso`)
+      )
       .catch((error) => {
         res.status(500).send(error);
       });
