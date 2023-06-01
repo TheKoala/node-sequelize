@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "docente_id",
       });
       Turmas.belongsTo(models.Niveis, {
-        foreignKey: "turma_id",
+        foreignKey: "nivel_id",
       });
     }
   }
