@@ -3,6 +3,18 @@ const database = require("../models");
 class PessoaController {
   static listarPessoas(req, res) {
     const { incluiDeletados } = req.query;
+    database.Pessoas.scope("todos")
+      .findAll({ paranoid: Boolean(!incluiDeletados) })
+      .then((pessoas) => {
+        res.status(200).send(pessoas);
+      })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
+  }
+
+  static listarPessoasAtivas(req, res) {
+    const { incluiDeletados } = req.query;
     database.Pessoas.findAll({ paranoid: Boolean(!incluiDeletados) })
       .then((pessoas) => {
         res.status(200).send(pessoas);
