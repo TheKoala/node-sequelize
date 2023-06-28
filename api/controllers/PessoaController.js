@@ -112,6 +112,19 @@ class PessoaController {
       });
   }
 
+  static async listaMatriculaPorEstudante(req, res) {
+    const { idEstudante } = req.params;
+    try {
+      const pessoa = await database.Pessoas.findOne({
+        where: { id: Number(idEstudante) },
+      });
+      const matriculas = await pessoa.getMatriculas();
+      return res.status(200).send(matriculas);
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  }
+
   static novaMatricula(req, res) {
     const { idEstudante } = req.params;
     const novaMatricula = { ...req.body, estudante_id: Number(idEstudante) };
