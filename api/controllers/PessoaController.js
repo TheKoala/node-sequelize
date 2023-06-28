@@ -112,7 +112,7 @@ class PessoaController {
       });
   }
 
-  static async listaMatriculaPorEstudante(req, res) {
+  static async listaMatriculasPorEstudante(req, res) {
     const { idEstudante } = req.params;
     try {
       const pessoa = await database.Pessoas.findOne({
@@ -120,6 +120,20 @@ class PessoaController {
       });
       const matriculas = await pessoa.getMatriculas();
       return res.status(200).send(matriculas);
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  }
+
+  static async contaMatriculasPorTurma(req, res) {
+    const { idTurma } = req.params;
+    try {
+      const matriculas = await database.Matriculas.findAndCountAll({
+        where: { turma_id: Number(idTurma), status: "confirmado" },
+        limit: 20,
+        order: [["estudante_id", "DESC"]],
+      });
+      return res.status(200).json(matriculas);
     } catch (error) {
       return res.status(500).send(error);
     }

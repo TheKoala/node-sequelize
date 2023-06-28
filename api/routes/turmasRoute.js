@@ -4,11 +4,12 @@ const TurmaController = require("../controllers/TurmaController");
 const router = Router();
 
 router
-  .get("/Turmas", TurmaController.listarTurmas)
-  .get("/Turmas/:id", TurmaController.listarTurmaPorId)
-  .post("/Turmas", TurmaController.cadastraTurma)
-  .put("/Turmas/:id", TurmaController.atualizaTurma)
-  .delete("/Turmas/:id", TurmaController.deletaTurma)
-  .post("/Turmas/:id/restaura", TurmaController.restauraTurma);
+  .get("/turmas", TurmaController.listarTurmas)
+  .get("/turmas/lotadas", TurmaController.listarTurmasLotadas)
+  .get("/turmas/:id", TurmaController.listarTurmaPorId)
+  .post("/turmas", TurmaController.cadastraTurma)
+  .put("/turmas/:id", TurmaController.atualizaTurma)
+  .delete("/turmas/:id", TurmaController.deletaTurma)
+  .post("/turmas/:id/restaura", TurmaController.restauraTurma);
 
 module.exports = router;
