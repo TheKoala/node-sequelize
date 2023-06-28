@@ -1,8 +1,17 @@
 const database = require("../models");
+const { Op } = require("sequelize");
 
 class TurmaController {
   static listarTurmas(req, res) {
-    database.Turmas.findAll()
+    const { data_inicial, data_final } = req.query;
+    const where = {};
+    data_inicial || data_final ? where.data_inicio = {} : null;
+    data_inicial ? where.data_inicio[Op.gte] = data_inicial : null;
+    data_final ? where.data_inicio[Op.lte] = data_final : null;
+    //where: {
+    //  data_inicio: { [Op.gte]: data_inicial, [Op.lte]: data_final },
+    //}
+    database.Turmas.findAll({ where })
       .then((turmas) => {
         res.status(200).send(turmas);
       })
@@ -74,7 +83,9 @@ class TurmaController {
       where: { id: Number(id) },
     })
       .then(() => {
-        res.status(200).send(`Turma com  o ID ${id} foi restaurado com sucesso`);
+        res
+          .status(200)
+          .send(`Turma com  o ID ${id} foi restaurado com sucesso`);
       })
       .catch((error) => {
         res.status(500).send(error);
