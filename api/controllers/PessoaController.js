@@ -1,7 +1,7 @@
 const database = require("../models");
-const Services = require("../services/Services");
+const { PessoaService } = require("../services");
 
-const pessoaService = new Services("Pessoas");
+const pessoaService = new PessoaService();
 
 class PessoaController {
 
