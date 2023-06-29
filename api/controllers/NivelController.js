@@ -1,8 +1,11 @@
 const database = require("../models");
+const Services = require("../services/Services");
+
+const niveisService = new Services("Niveis");
 
 class NivelController {
   static listarNiveis(req, res) {
-    database.Niveis.findAll()
+    niveisService.listarTudo()
       .then((niveis) => {
         res.status(200).send(niveis);
       })

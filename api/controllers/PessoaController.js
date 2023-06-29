@@ -1,6 +1,10 @@
 const database = require("../models");
+const Services = require("../services/Services");
+
+const pessoaService = new Services("Pessoas");
 
 class PessoaController {
+
   static listarPessoas(req, res) {
     const { incluiDeletados } = req.query;
     database.Pessoas.scope("todos")
@@ -15,7 +19,7 @@ class PessoaController {
 
   static listarPessoasAtivas(req, res) {
     const { incluiDeletados } = req.query;
-    database.Pessoas.findAll({ paranoid: Boolean(!incluiDeletados) })
+    pessoaService.listarTudo({ paranoid: Boolean(!incluiDeletados) })
       .then((pessoas) => {
         res.status(200).send(pessoas);
       })
