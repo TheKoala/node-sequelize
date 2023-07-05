@@ -4,11 +4,10 @@ const { PessoaService } = require("../services");
 const pessoaService = new PessoaService();
 
 class PessoaController {
-
   static listarPessoas(req, res) {
     const { incluiDeletados } = req.query;
-    database.Pessoas.scope("todos")
-      .findAll({ paranoid: Boolean(!incluiDeletados) })
+    pessoaService
+      .listarTodos({}, Boolean(!incluiDeletados))
       .then((pessoas) => {
         res.status(200).send(pessoas);
       })
@@ -19,7 +18,8 @@ class PessoaController {
 
   static listarPessoasAtivas(req, res) {
     const { incluiDeletados } = req.query;
-    pessoaService.listarTudo({ paranoid: Boolean(!incluiDeletados) })
+    pessoaService
+      .listarAtivos({}, { paranoid: Boolean(!incluiDeletados) })
       .then((pessoas) => {
         res.status(200).send(pessoas);
       })
@@ -105,27 +105,11 @@ class PessoaController {
 
   static async desativaPessoa(req, res) {
     const { id } = req.params;
-
     try {
-      await database.sequelize.transaction(async (t) => {
-        await database.Pessoas.update(
-          { ativo: false },
-          {
-            where: { id: Number(id) },
-          },
-          { transaction: t }
-        );
-        await database.Matriculas.update(
-          { status: "cancelado" },
-          {
-            where: { estudante_id: Number(id) },
-          },
-          { transaction: t }
-        );
-        return res
-          .status(200)
-          .send(`Pessoa com o ID ${id} foi desativada com sucesso`);
-      });
+      await pessoaService.desativaPessoa(Number(id));
+      return res
+        .status(200)
+        .send(`Pessoa com o ID ${id} foi desativada com sucesso`);
     } catch (error) {
       return res.status(500).send(error);
     }
